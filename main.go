@@ -24,8 +24,8 @@ func operationOneChild(ctx context.Context) {
 
 func operaionOne(ctx context.Context) {
 	n := 1
-	// go operationOneChild(context.WithValue(ctx, Key("op_id"), "CHILD OF ONE"))
-	go operationOneChild(nil)
+	go operationOneChild(context.WithValue(ctx, Key("op_id"), "CHILD OF ONE"))
+	// go operationOneChild(nil)
 	for {
 		select {
 		case <-ctx.Done():
