@@ -6,15 +6,17 @@ import (
 	"time"
 )
 
+type Key string
+
 func operaionOne(ctx context.Context) {
 	n := 1
 	for {
 		select {
 		case <-ctx.Done():
-			fmt.Println("context canceled for op-1")
+			fmt.Printf("context canceled for %s\n", ctx.Value(Key("op_id")))
 			return // returning not to leak the goroutine
 		default:
-			fmt.Printf("OperationOne: %d\n", n)
+			fmt.Printf("OperationOne: %d : opeartion_id = %s\n", n, ctx.Value(Key("op_id")))
 			time.Sleep(500 * time.Millisecond)
 			n++
 		}
@@ -26,10 +28,10 @@ func operaionTwo(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			fmt.Println("context canceled for op-2")
+			fmt.Printf("context canceled for %s\n", ctx.Value(Key("op_id")))
 			return // returning not to leak the goroutine
 		default:
-			fmt.Printf("OperationTwo: %d\n", n)
+			fmt.Printf("OperationTwo: %d : opeartion_id = %s\n", n, ctx.Value(Key("op_id")))
 			time.Sleep(250 * time.Millisecond)
 			n++
 		}
@@ -41,11 +43,13 @@ func main() {
 	defer cancel()
 	d := time.Now().Add(5000 * time.Millisecond)
 	ctx, _ = context.WithDeadline(context.Background(), d)
+	ctx = context.WithValue(ctx, Key("op_id"), "ONE")
 	go operaionOne(ctx)
 
 	d = time.Now().Add(10000 * time.Millisecond)
 	ctx, _ = context.WithDeadline(context.Background(), d)
+	ctx = context.WithValue(ctx, Key("op_id"), "TWO")
 	go operaionTwo(ctx)
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(20 * time.Second)
 }
