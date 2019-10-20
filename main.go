@@ -8,8 +8,24 @@ import (
 
 type Key string
 
+func operationOneChild(ctx context.Context) {
+	for {
+		select {
+		case <-ctx.Done():
+			fmt.Printf("context canceled for %s\n", ctx.Value(Key("op_id")))
+			return // returning not to leak the goroutine
+		default:
+			fmt.Println("Child of operation one")
+			time.Sleep(100 * time.Millisecond)
+		}
+	}
+
+}
+
 func operaionOne(ctx context.Context) {
 	n := 1
+	// go operationOneChild(context.WithValue(ctx, Key("op_id"), "CHILD OF ONE"))
+	go operationOneChild(nil)
 	for {
 		select {
 		case <-ctx.Done():
