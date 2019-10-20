@@ -47,5 +47,5 @@ func main() {
 	ctx, _ = context.WithDeadline(context.Background(), d)
 	go operaionTwo(ctx)
 
-	time.Sleep(20 * time.Second)
+	time.Sleep(3 * time.Second)
 }
