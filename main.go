@@ -24,5 +24,6 @@ func operaionOne(ctx context.Context) {
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	operaionOne(ctx)
+	go operaionOne(ctx)
+	time.Sleep(5 * time.Second)
 }
